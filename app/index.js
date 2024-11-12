@@ -10,7 +10,7 @@ import StatisticsScreen from "../components/StatisticsScreen"
 import { supabase } from "../utils/client"
 
 const Stack = createNativeStackNavigator()
-console.log(supabase)
+
 const SettingsButton = ({ navigation }) => (
   <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
     <Image
