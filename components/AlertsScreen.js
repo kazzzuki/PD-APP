@@ -16,6 +16,25 @@ const AlertsScreen = ({ route, navigation }) => {
   const { operatorId } = route.params || {}
   const [alerts, setAlerts] = useState([])
 
+  useEffect(() => {
+    fetchAlerts()
+    const channels = supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Alerts" },
+        (payload) => {
+          console.log("Change received!", payload)
+          fetchAlerts()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channels)
+    }
+  }, [supabase])
+
   const fetchAlerts = async () => {
     const { data, error } = await supabase.from("Alerts").select("*")
 
@@ -23,20 +42,6 @@ const AlertsScreen = ({ route, navigation }) => {
       console.log("Error fetching alerts: ", error)
     } else setAlerts(data)
   }
-
-  useEffect(() => {
-    fetchAlerts()
-
-    const channel = supabase
-      .channel("room1")
-      .on("postgres_changes", { event: "*", schema: "*" }, (payload) => {
-        console.log("Alerts table change detected: ", payload)
-        fetchAlerts()
-      })
-      .subscribe()
-
-    return () => supabase.removeChannel(channel)
-  }, [])
 
   renderAlertItem = ({ item }) => {
     const { id, is_resolved, image_path, uid, timedate } = item

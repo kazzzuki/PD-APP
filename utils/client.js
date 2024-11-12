@@ -30,8 +30,3 @@ export async function authUser(id) {
     return data.length > 0
   }
 }
-
-export function fetchAlertsData() {
-  console.log("Component mounted", alerts)
-  return alerts
-}
