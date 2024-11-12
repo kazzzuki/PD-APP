@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useState, useEffect } from "react"
 import { createClient } from "@supabase/supabase-js"
 import config from "./supabase"
 
@@ -28,4 +29,9 @@ export async function authUser(id) {
     console.log(`Logging in Operator ${id}`)
     return data.length > 0
   }
+}
+
+export function fetchAlertsData() {
+  console.log("Component mounted", alerts)
+  return alerts
 }

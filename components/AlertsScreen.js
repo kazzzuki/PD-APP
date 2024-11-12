@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -8,41 +8,46 @@ import {
   Image,
   FlatList,
 } from "react-native"
-
-const alerts = [
-  {
-    status: "Active",
-    time: "10:48:28 A.M.",
-    date: "04/11/2024",
-    is_resolved: false,
-  },
-  {
-    status: "Resolved",
-    time: "10:48:28 A.M.",
-    date: "04/11/2024",
-    is_resolved: true,
-  },
-  {
-    status: "Resolved",
-    time: "10:48:28 A.M.",
-    date: "04/11/2024",
-    is_resolved: true,
-  },
-]
+import { fetchAlertsData } from "../utils/client"
+import { formatDateAndTime } from "../utils/timedate"
+import { supabase } from "../utils/client"
 
 const AlertsScreen = ({ route, navigation }) => {
   const { operatorId } = route.params || {}
+  const [alerts, setAlerts] = useState([])
+
+  const fetchAlerts = async () => {
+    const { data, error } = await supabase.from("Alerts").select("*")
+
+    if (error) {
+      console.log("Error fetching alerts: ", error)
+    } else setAlerts(data)
+  }
+
+  useEffect(() => {
+    fetchAlerts()
+
+    const channel = supabase
+      .channel("room1")
+      .on("postgres_changes", { event: "*", schema: "*" }, (payload) => {
+        console.log("Alerts table change detected: ", payload)
+        fetchAlerts()
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [])
 
   renderAlertItem = ({ item }) => {
-    const { is_resolved, image_path, uid, timedate } = this.props
-
+    const { id, is_resolved, image_path, uid, timedate } = item
+    const { date, time } = formatDateAndTime(timedate)
     return (
       <View key={uid} style={styles.alertBox}>
         <Text style={is_resolved ? styles.resolvedText : styles.activeText}>
           Status: {is_resolved ? "Resolved" : "Active"}
         </Text>
-        <Text>{alert.time}</Text>
-        <Text>{alert.date}</Text>
+        <Text>{time}</Text>
+        <Text>{date}</Text>
         <TouchableOpacity
           style={is_resolved ? styles.resolvedButton : styles.detailsButton}
           onPress={() => !is_resolved && navigation.navigate("AlertDetails")}
