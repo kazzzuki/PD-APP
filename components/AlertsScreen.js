@@ -11,6 +11,7 @@ import {
 import { fetchAlertsData } from "../utils/client"
 import { formatDateAndTime } from "../utils/timedate"
 import { supabase } from "../utils/client"
+;("use strict")
 
 const AlertsScreen = ({ route, navigation }) => {
   const { operatorId } = route.params || {}
@@ -24,7 +25,11 @@ const AlertsScreen = ({ route, navigation }) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "Alerts" },
         (payload) => {
-          console.log("Change received!", payload)
+          console.log(
+            new Date(),
+            " | PostGres changes recieved, type: ",
+            payload.eventType
+          )
           fetchAlerts()
         }
       )
@@ -36,26 +41,33 @@ const AlertsScreen = ({ route, navigation }) => {
   }, [supabase])
 
   const fetchAlerts = async () => {
-    const { data, error } = await supabase.from("Alerts").select("*")
+    const { data, error } = await supabase
+      .from("Alerts")
+      .select("*")
+      .order("timedate", { ascending: true })
 
     if (error) {
-      console.log("Error fetching alerts: ", error)
+      console.log(new Date(), " | Error fetching alerts: ", error)
     } else setAlerts(data)
   }
 
   renderAlertItem = ({ item }) => {
-    const { id, is_resolved, image_path, uid, timedate } = item
+    const { id, is_resolved, image_path, uid, timedate, description } = item
     const { date, time } = formatDateAndTime(timedate)
     return (
       <View key={uid} style={styles.alertBox}>
-        <Text style={is_resolved ? styles.resolvedText : styles.activeText}>
-          Status: {is_resolved ? "Resolved" : "Active"}
-        </Text>
-        <Text>{time}</Text>
-        <Text>{date}</Text>
+        <View style={styles.alertTexts}>
+          <Text style={is_resolved ? styles.resolvedText : styles.activeText}>
+            Status: {is_resolved ? "Resolved" : "Active"}
+          </Text>
+          <Text>{time}</Text>
+          <Text>{date}</Text>
+        </View>
         <TouchableOpacity
           style={is_resolved ? styles.resolvedButton : styles.detailsButton}
-          onPress={() => !is_resolved && navigation.navigate("AlertDetails")}
+          onPress={() =>
+            !is_resolved && navigation.navigate("AlertDetails", { item })
+          }
           disabled={is_resolved}
         >
           <Text style={styles.buttonText}>
@@ -115,6 +127,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   alertBox: {
+    flexDirection: "row",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
@@ -122,18 +135,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   activeText: {
+    fontSize: 20,
     color: "red",
     fontWeight: "bold",
   },
   resolvedText: {
+    fontSize: 20,
     color: "green",
   },
   detailsButton: {
+    flex: 1,
+    marginLeft: 100,
+    marginVertical: 20,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#ccc",
     padding: 8,
     marginTop: 10,
   },
   resolvedButton: {
+    flex: 1,
+    marginLeft: 100,
+    marginVertical: 20,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#e0e0e0",
     padding: 8,
     marginTop: 10,

@@ -23,10 +23,31 @@ export async function authUser(id) {
     .eq("operatorID", String(id))
 
   if (error) {
-    console.log("Operator ID does not exist")
+    console.log(new Date(), " | Operator ID does not exist")
     return false
   } else {
-    console.log(`Logging in Operator ${id}`)
+    console.log(`${new Date()} | Logging in Operator ${id}`)
     return data.length > 0
+  }
+}
+
+export async function getImageURL(image_path) {
+  const { data, error } = supabase.storage
+    .from("AlertImages")
+    .getPublicUrl(image_path)
+  if (error) {
+    console.log(new Date(), " | Cannot fetch image public URL")
+  } else {
+    return data.publicUrl
+  }
+}
+
+export async function resolveAlert(uid) {
+  const { error } = await supabase
+    .from("Alerts")
+    .update({ is_resolved: true })
+    .eq("uid", uid)
+  if (error) {
+    console.log(new Date(), " | Unable to resolve alert")
   }
 }
