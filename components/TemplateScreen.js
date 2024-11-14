@@ -1,9 +1,20 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native"
+import { getImageURL } from "../utils/client"
 
 const TemplateScreen = ({ navigation }) => {
   const [templateGenerated, setTemplateGenerated] = useState(false)
   const [isRecalibrating, setIsRecalibrating] = useState(false)
+  const [imageUrl, setImageUrl] = useState(null)
+  let image_path = "template/defaultTemplate.png" // Default template image path
+
+  useEffect(() => {
+    const fetchImageUrl = async () => {
+      const url = await getImageURL(image_path)
+      setImageUrl(url)
+    }
+    fetchImageUrl()
+  }, [image_path])
 
   const handleStart = () => {
     setTemplateGenerated(true)
@@ -17,9 +28,11 @@ const TemplateScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageBox}>
-        <Text>
-          {templateGenerated ? "Generated Template" : "No Generated Template"}
-        </Text>
+        <Image
+          style={styles.image}
+          source={{ uri: imageUrl }}
+          resizeMode="contain"
+        />
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -81,6 +94,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
+  },
+  image: {
+    flex: 1,
+    aspectRatio: 1,
+    width: "100%",
+    height: undefined,
   },
   imageBox: {
     width: 300,

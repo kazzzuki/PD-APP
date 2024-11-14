@@ -37,7 +37,9 @@ export async function getImageURL(image_path) {
     .getPublicUrl(image_path)
   if (error) {
     console.log(new Date(), " | Cannot fetch image public URL")
+    return null
   } else {
+    console.log(new Date(), " | URL fetch: ", image_path)
     return data.publicUrl
   }
 }
