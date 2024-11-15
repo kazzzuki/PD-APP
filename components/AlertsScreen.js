@@ -70,9 +70,7 @@ const AlertsScreen = ({ route, navigation }) => {
           }
           disabled={is_resolved}
         >
-          <Text style={styles.buttonText}>
-            {is_resolved ? "Resolved" : "Details"}
-          </Text>
+          <Text style={styles.buttonText}>{is_resolved ? "" : "Details"}</Text>
         </TouchableOpacity>
       </View>
     )
@@ -134,6 +132,9 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 10,
   },
+  alertTexts: {
+    flex: 2,
+  },
   activeText: {
     fontSize: 20,
     color: "red",
@@ -145,21 +146,19 @@ const styles = StyleSheet.create({
   },
   detailsButton: {
     flex: 1,
-    marginLeft: 100,
     marginVertical: 20,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#ccc",
-    padding: 8,
+    padding: 5,
     marginTop: 10,
+    borderRadius: 20,
   },
   resolvedButton: {
     flex: 1,
-    marginLeft: 100,
     marginVertical: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#e0e0e0",
     padding: 8,
     marginTop: 10,
   },

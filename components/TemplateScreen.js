@@ -30,7 +30,7 @@ const TemplateScreen = ({ navigation }) => {
       <View style={styles.imageBox}>
         <Image
           style={styles.image}
-          source={{ uri: imageUrl }}
+          source={templateGenerated ? { uri: imageUrl } : null}
           resizeMode="contain"
         />
       </View>

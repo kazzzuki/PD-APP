@@ -10,10 +10,22 @@
       "supportsTablet": true
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "33fe379d-3d99-4755-a560-2af70e64b5e1"
+      }
+    },
+    "android": {
+      "package": "com.pagp332.SpotLessApp"
     }
   }
 }
