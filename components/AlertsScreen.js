@@ -35,6 +35,7 @@ const AlertsScreen = ({ route, navigation }) => {
             " | PostGres changes recieved, type: ",
             payload.eventType
           )
+          console.log(payload)
           fetchAlerts()
         }
       )
