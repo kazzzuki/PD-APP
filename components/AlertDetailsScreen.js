@@ -6,8 +6,8 @@ import COLORS from "@/constants/colors"
 import { Colors } from "react-native/Libraries/NewAppScreen"
 
 const AlertDetailsScreen = ({ route, navigation }) => {
-  const { item } = route.params
-  const { id, is_resolved, image_path, uid, timedate, description } = item
+  const { id, is_resolved, image_path, uid, timedate, description } =
+    route.params.item
   const { date, time } = formatDateAndTime(timedate)
   const [imageUrl, setImageUrl] = useState(
     "https://tgqeqtuhfntgmcnjgxsh.supabase.co/storage/v1/object/public/AlertImages/default/defaultImage.png"
@@ -29,30 +29,60 @@ const AlertDetailsScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Date Detected: {date}</Text>
-      <Text>Time: {time}</Text>
-      <View style={styles.imageBox}>
+      <View style={styles.textBox}>
+        <Text style={[styles.text, { fontSize: 12, marginBottom: 2 }]}>
+          {uid}
+        </Text>
+        <Text style={[styles.text, { fontSize: 24 }]}>{date}</Text>
+        <Text style={[styles.text, { fontSize: 20 }]}>{time}</Text>
+        <Text
+          style={[
+            styles.text,
+            { fontSize: 18, margin: 30, color: COLORS.primary },
+          ]}
+        >
+          {description ? description : "No Description"}
+        </Text>
+      </View>
+      <TouchableOpacity
+        style={styles.imageBox}
+        onPress={() => navigation.navigate("Fullscreen", { imageUrl })}
+      >
         <Image
           style={styles.image}
           source={{ uri: imageUrl }}
           resizeMode="contain"
         />
-      </View>
-      <TouchableOpacity
-        style={[
-          styles.resolvedButton,
-          is_resolved && { backgroundColor: COLORS.gray },
-        ]}
-        onPress={handleResolve}
-        disabled={is_resolved}
-      >
-        <Text style={styles.buttonText}>Resolved</Text>
       </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.resolvedButton,
+            is_resolved && { backgroundColor: COLORS.gray },
+          ]}
+          onPress={handleResolve}
+          disabled={is_resolved}
+        >
+          <Text style={styles.buttonText}>Resolved</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  text: {
+    fontFamily: "Lato_400Regular",
+  },
+  textBox: {
+    flex: 1,
+    borderRadius: 50,
+    width: "95%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.gray,
+    paddingTop: 20,
+  },
   container: {
     flex: 1,
     justifyContent: "center",
@@ -69,20 +99,24 @@ const styles = StyleSheet.create({
   imageBox: {
     width: 250,
     height: 250,
-    backgroundColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 20,
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   resolvedButton: {
     backgroundColor: COLORS.primary,
     padding: 20,
     borderRadius: 20,
-    marginTop: 50,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
+    fontFamily: "Lato_400Regular",
   },
 })
 

@@ -1,12 +1,42 @@
-import React from "react"
-import { View, TouchableOpacity, Image, StyleSheet, Alert } from "react-native"
+import React, { useState, useEffect } from "react"
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  Modal,
+} from "react-native"
 import COLORS from "../constants/colors"
 
+import * as Font from "expo-font"
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons"
+import LoadingView from "./LoadingView"
 
 export default Toolbar = ({ navigation }) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    const loadFonts = async () => {
+      try {
+        await Font.loadAsync({
+          ...MaterialIcons.font,
+          ...MaterialCommunityIcons.font,
+          ...SimpleLineIcons.font,
+        })
+        setIsLoaded(true)
+      } catch (error) {
+        console.error("Error loading fonts:", error)
+      }
+    }
+    loadFonts()
+  }, [])
+  if (!isLoaded) {
+    return <LoadingView visibility={!isLoaded} isModal={true} />
+  }
+
   return (
     <View style={styles.tabContainer}>
       <TouchableOpacity

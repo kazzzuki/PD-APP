@@ -111,12 +111,12 @@ const AlertsScreen = ({ route, navigation }) => {
           <Text style={is_resolved ? styles.resolvedText : styles.activeText}>
             Status: {is_resolved ? "Resolved" : "Active"}
           </Text>
-          <Text>{time}</Text>
-          <Text>{date}</Text>
+          <Text style={styles.text}>{time}</Text>
+          <Text style={styles.text}>{date}</Text>
         </View>
         <TouchableOpacity
           style={styles.detailsButton}
-          onPress={() => navigation.navigate("AlertDetails", { item })}
+          onPress={() => navigation.navigate("Alert Details", { item })}
         >
           <Text style={styles.buttonText}>Details</Text>
         </TouchableOpacity>
@@ -151,6 +151,9 @@ const AlertsScreen = ({ route, navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  text: {
+    fontFamily: "Lato_400Regular",
+  },
   debug: {
     justifyContent: "center",
     alignItems: "center",
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
   alertBox: {
     flexDirection: "row",
     backgroundColor: "#F6F6FB",
-    borderRadius: 5,
+    borderRadius: 20,
     padding: 16,
     paddingRight: 5,
     marginBottom: 10,
@@ -203,6 +206,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
+    fontFamily: "Lato_400Regular",
   },
   tabContainer: {
     flexDirection: "row",

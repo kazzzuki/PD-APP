@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native"
 import { getImageURL, broadcastGenerateTemplate } from "../utils/client"
+import LoadingView from "../components/LoadingView"
 import Toolbar from "../components/Toolbar"
 import COLORS from "../constants/colors"
 
@@ -8,6 +9,7 @@ const TemplateScreen = ({ navigation }) => {
   const [templateGenerated, setTemplateGenerated] = useState(false)
   const [isRecalibrating, setIsRecalibrating] = useState(false)
   const [imageUrl, setImageUrl] = useState(null)
+  const [loading, setLoading] = useState(false)
   let image_path = "template/template" // Default template image path
 
   useEffect(() => {
@@ -40,19 +42,24 @@ const TemplateScreen = ({ navigation }) => {
     }, [imageUrl])
 
     return (
-      <Image
-        style={styles.image}
-        source={{ uri: updatedUrl }}
-        resizeMode="contain"
-      />
+      <View>
+        <Image
+          style={styles.image}
+          source={{ uri: updatedUrl }}
+          resizeMode="contain"
+        />
+      </View>
     )
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageBox}>
+      <TouchableOpacity
+        style={styles.imageBox}
+        onPress={() => navigation.navigate("Fullscreen", { imageUrl })}
+      >
         <DynamicImage imageUrl={imageUrl} />
-      </View>
+      </TouchableOpacity>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[
