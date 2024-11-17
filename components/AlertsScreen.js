@@ -7,10 +7,15 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  Alert,
 } from "react-native"
-import { fetchAlertsData } from "../utils/client"
+import {
+  fetchAlertsData,
+  supabase,
+  deleteAlert,
+  broadcastDebugCapture,
+} from "../utils/client"
 import { formatDateAndTime } from "../utils/timedate"
-import { supabase } from "../utils/client"
 ;("use strict")
 
 const AlertsScreen = ({ route, navigation }) => {
@@ -44,11 +49,26 @@ const AlertsScreen = ({ route, navigation }) => {
     const { data, error } = await supabase
       .from("Alerts")
       .select("*")
-      .order("timedate", { ascending: true })
+      .order("timedate", { ascending: false })
 
     if (error) {
       console.log(new Date(), " | Error fetching alerts: ", error)
     } else setAlerts(data)
+  }
+
+  const deleteSure = (uid, img_path) => {
+    Alert.alert("Delete Alert", "Are you sure you want to delete this alert?", [
+      {
+        text: "Yes",
+        onPress: () => handleDelete(uid, img_path),
+        style: "destructive",
+      },
+      { text: "Cancel", style: "cancel" },
+    ])
+  }
+
+  const handleDelete = (uid, img_path) => {
+    deleteAlert(uid, img_path)
   }
 
   renderAlertItem = ({ item }) => {
@@ -72,6 +92,12 @@ const AlertsScreen = ({ route, navigation }) => {
         >
           <Text style={styles.buttonText}>{is_resolved ? "" : "Details"}</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => deleteSure(uid, image_path)}
+          style={styles.deleteButton}
+        >
+          <Text>X</Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -84,6 +110,9 @@ const AlertsScreen = ({ route, navigation }) => {
         keyExtractor={(item) => item.uid}
         renderItem={renderAlertItem}
       />
+      <TouchableOpacity style={styles.debug} onPress={broadcastDebugCapture}>
+        <Text style={{ fontSize: 16 }}>debug</Text>
+      </TouchableOpacity>
       <View style={styles.tabContainer}>
         <TouchableOpacity
           onPress={() => navigation.navigate("Template")}
@@ -118,6 +147,10 @@ const AlertsScreen = ({ route, navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  debug: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
   },
@@ -131,6 +164,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 16,
     marginBottom: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   alertTexts: {
     flex: 2,
@@ -151,7 +186,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ccc",
     padding: 5,
-    marginTop: 10,
+    marginVertical: 10,
     borderRadius: 20,
   },
   resolvedButton: {
@@ -161,6 +196,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 8,
     marginTop: 10,
+  },
+  deleteButton: {
+    flex: 0.5,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
     color: "black",

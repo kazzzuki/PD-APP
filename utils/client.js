@@ -53,3 +53,43 @@ export async function resolveAlert(uid) {
     console.log(new Date(), " | Unable to resolve alert")
   }
 }
+
+export async function deleteAlert(uid, img_path) {
+  if (img_path.startsWith("default/")) {
+    console.log("not deleting within default folder")
+  } else {
+    const { data, error } = await supabase.storage
+      .from("AlertImages")
+      .remove([img_path])
+    if (error) {
+      console.log(new Date(), " | Error - ", error)
+      return
+    }
+  }
+  const response = await supabase.from("Alerts").delete().eq("uid", uid)
+  console.log(new Date(), " | ", response)
+}
+
+export async function broadcastGenerateTemplate() {
+  const { error } = await supabase
+    .from("functions")
+    .update({ status: true })
+    .eq("id", 1)
+  if (error) {
+    console.log(new Date(), " | Unable to call templateGenerate")
+  } else {
+    console.log(new Date(), " | Set templateGenerate to be called")
+  }
+}
+
+export async function broadcastDebugCapture() {
+  const { error } = await supabase
+    .from("functions")
+    .update({ status: true })
+    .eq("id", 2)
+  if (error) {
+    console.log(new Date(), " | Unable to call templateGenerate")
+  } else {
+    console.log(new Date(), " | Set debugCapture to be called")
+  }
+}

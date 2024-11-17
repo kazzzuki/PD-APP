@@ -1,21 +1,26 @@
 export const formatDateAndTime = (isoString) => {
-  // Parse the date and adjust for +08 timezone offset
-  const dateInUTC = new Date(isoString)
-  const dateInDesiredTZ = new Date(dateInUTC.getTime() + 8 * 60 * 60 * 1000) // +08 offset
+  const optionsDate = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "Asia/Manila",
+  } // +08 timezone
+  const optionsTime = {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Manila",
+  }
 
-  // Extract date components
-  const day = String(dateInDesiredTZ.getDate()).padStart(2, "0")
-  const month = String(dateInDesiredTZ.getMonth() + 1).padStart(2, "0") // Month is 0-indexed
-  const year = String(dateInDesiredTZ.getFullYear()).slice(-2)
+  const date = new Date(isoString)
 
-  // Extract time components
-  const hours = String(dateInDesiredTZ.getHours()).padStart(2, "0")
-  const minutes = String(dateInDesiredTZ.getMinutes()).padStart(2, "0")
-  const seconds = String(dateInDesiredTZ.getSeconds()).padStart(2, "0")
-
-  // Format date and time
-  const formattedDate = `${day}/${month}/${year}`
-  const formattedTime = `${hours}:${minutes}:${seconds}`
+  const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
+    date
+  )
+  const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
+    date
+  )
 
   return { date: formattedDate, time: formattedTime }
 }

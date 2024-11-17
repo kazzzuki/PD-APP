@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native"
-import { getImageURL } from "../utils/client"
+import { getImageURL, broadcastGenerateTemplate } from "../utils/client"
 
 const TemplateScreen = ({ navigation }) => {
   const [templateGenerated, setTemplateGenerated] = useState(false)
   const [isRecalibrating, setIsRecalibrating] = useState(false)
   const [imageUrl, setImageUrl] = useState(null)
-  let image_path = "template/defaultTemplate.png" // Default template image path
+  let image_path = "template/template" // Default template image path
 
   useEffect(() => {
     const fetchImageUrl = async () => {
@@ -19,20 +19,37 @@ const TemplateScreen = ({ navigation }) => {
   const handleStart = () => {
     setTemplateGenerated(true)
     setIsRecalibrating(false)
+    broadcastGenerateTemplate()
   }
 
   const handleRecalibrate = () => {
     setIsRecalibrating(true)
+    broadcastGenerateTemplate()
+  }
+
+  const DynamicImage = ({ imageUrl }) => {
+    const [updatedUrl, setUpdatedUrl] = useState(`${imageUrl}?t=${Date.now()}`)
+
+    useEffect(() => {
+      // Poll the server periodically to check for updates
+      const interval = setTimeout(() => {
+        setUpdatedUrl(`${imageUrl}?t=${Date.now()}`) // Append a new timestamp
+      }, 5000) // Poll every 5 seconds (adjust interval as needed)
+    }, [imageUrl])
+
+    return (
+      <Image
+        style={styles.image}
+        source={{ uri: updatedUrl }}
+        resizeMode="contain"
+      />
+    )
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.imageBox}>
-        <Image
-          style={styles.image}
-          source={templateGenerated ? { uri: imageUrl } : null}
-          resizeMode="contain"
-        />
+        <DynamicImage imageUrl={imageUrl} />
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity

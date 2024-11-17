@@ -7,12 +7,14 @@ const AlertDetailsScreen = ({ route, navigation }) => {
   const { item } = route.params
   const { id, is_resolved, image_path, uid, timedate, description } = item
   const { date, time } = formatDateAndTime(timedate)
-  const [imageUrl, setImageUrl] = useState(null)
+  const [imageUrl, setImageUrl] = useState(
+    "https://tgqeqtuhfntgmcnjgxsh.supabase.co/storage/v1/object/public/AlertImages/default/defaultImage.png"
+  )
 
   useEffect(() => {
     const fetchImageUrl = async () => {
       const url = await getImageURL(image_path)
-      setImageUrl(url)
+      if (url) setImageUrl(url)
     }
     fetchImageUrl()
   }, [image_path])
