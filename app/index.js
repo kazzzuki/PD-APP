@@ -8,6 +8,8 @@ import AlertDetailsScreen from "../components/AlertDetailsScreen"
 import TemplateScreen from "../components/TemplateScreen"
 import StatisticsScreen from "../components/StatisticsScreen"
 import { supabase } from "../utils/client"
+import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato"
+import AppLoading from "expo-app-loading"
 
 const Stack = createNativeStackNavigator()
 
@@ -21,53 +23,61 @@ const SettingsButton = ({ navigation }) => (
 )
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Stack.Navigator initialRouteName="Authentication">
-        <Stack.Screen
-          name="Authentication"
-          component={AuthenticationScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Alerts"
-          component={AlertsScreen}
-          options={({ navigation }) => ({
-            headerLeft: () => <SettingsButton navigation={navigation} />,
-            headerTitleAlign: "center",
-            animation: "none",
-          })}
-        />
-        <Stack.Screen
-          name="AlertDetails"
-          component={AlertDetailsScreen}
-          options={{
-            headerBackTitleVisible: false,
-            headerTitleAlign: "center",
-            animation: "slide_from_right",
-          }}
-        />
-        <Stack.Screen
-          name="Template"
-          component={TemplateScreen}
-          options={({ navigation }) => ({
-            headerLeft: () => <SettingsButton navigation={navigation} />,
-            headerTitleAlign: "center",
-            animation: "none",
-          })}
-        />
-        <Stack.Screen
-          name="Statistics"
-          component={StatisticsScreen}
-          options={({ navigation }) => ({
-            headerLeft: () => <SettingsButton navigation={navigation} />,
-            headerTitleAlign: "center",
-            animation: "none",
-          })}
-        />
-      </Stack.Navigator>
-    </View>
-  )
+  let [fontsLoaded] = useFonts({
+    Lato_400Regular,
+  })
+
+  if (!fontsLoaded) {
+    return <AppLoading />
+  } else {
+    return (
+      <View style={styles.container}>
+        <Stack.Navigator initialRouteName="Authentication">
+          <Stack.Screen
+            name="Authentication"
+            component={AuthenticationScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Alerts"
+            component={AlertsScreen}
+            options={({ navigation }) => ({
+              headerLeft: () => <SettingsButton navigation={navigation} />,
+              headerTitleAlign: "center",
+              animation: "none",
+            })}
+          />
+          <Stack.Screen
+            name="AlertDetails"
+            component={AlertDetailsScreen}
+            options={{
+              headerBackTitleVisible: false,
+              headerTitleAlign: "center",
+              animation: "slide_from_right",
+            }}
+          />
+          <Stack.Screen
+            name="Template"
+            component={TemplateScreen}
+            options={({ navigation }) => ({
+              headerLeft: () => <SettingsButton navigation={navigation} />,
+              headerTitleAlign: "center",
+              animation: "none",
+            })}
+          />
+          <Stack.Screen
+            name="Statistics"
+            component={StatisticsScreen}
+            options={({ navigation }) => ({
+              headerLeft: () => <SettingsButton navigation={navigation} />,
+              headerTitleAlign: "center",
+              animation: "none",
+            })}
+          />
+        </Stack.Navigator>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

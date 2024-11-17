@@ -1,5 +1,6 @@
 import React from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native"
+import Toolbar from "../components/Toolbar"
 
 const StatisticsScreen = ({ navigation }) => {
   return (
@@ -7,35 +8,7 @@ const StatisticsScreen = ({ navigation }) => {
       <View style={styles.content}>
         <Text style={styles.title}>Statistics Screen</Text>
       </View>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Template")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/template.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Alerts")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/alerts.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Statistics")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/statistics.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
+      <Toolbar navigation={navigation} />
     </View>
   )
 }

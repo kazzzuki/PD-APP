@@ -8,6 +8,7 @@ import {
   Image,
   FlatList,
   Alert,
+  Vibration,
 } from "react-native"
 import {
   fetchAlertsData,
@@ -16,7 +17,11 @@ import {
   broadcastDebugCapture,
 } from "../utils/client"
 import { formatDateAndTime } from "../utils/timedate"
-;("use strict")
+import Toolbar from "../components/Toolbar"
+import COLORS from "../constants/colors"
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
+
+// ;("use strict")
 
 const AlertsScreen = ({ route, navigation }) => {
   const { operatorId } = route.params || {}
@@ -35,8 +40,19 @@ const AlertsScreen = ({ route, navigation }) => {
             " | PostGres changes recieved, type: ",
             payload.eventType
           )
-          console.log(payload)
           fetchAlerts()
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "Alerts" },
+        (payload) => {
+          console.log(
+            new Date(),
+            " | PostGres changes recieved, type: ",
+            payload.eventType
+          )
+          newAlert()
         }
       )
       .subscribe()
@@ -72,6 +88,20 @@ const AlertsScreen = ({ route, navigation }) => {
     deleteAlert(uid, img_path)
   }
 
+  const newAlert = () => {
+    const ONE_SECOND_IN_MS = 1000
+    const PATTERN = [
+      1 * ONE_SECOND_IN_MS,
+      2 * ONE_SECOND_IN_MS,
+      3 * ONE_SECOND_IN_MS,
+    ]
+
+    Vibration.vibrate(PATTERN)
+    Alert.alert("", "New Alert Recieved", [
+      { text: "Understood", style: "default" },
+    ])
+  }
+
   renderAlertItem = ({ item }) => {
     const { id, is_resolved, image_path, uid, timedate, description } = item
     const { date, time } = formatDateAndTime(timedate)
@@ -85,19 +115,20 @@ const AlertsScreen = ({ route, navigation }) => {
           <Text>{date}</Text>
         </View>
         <TouchableOpacity
-          style={is_resolved ? styles.resolvedButton : styles.detailsButton}
-          onPress={() =>
-            !is_resolved && navigation.navigate("AlertDetails", { item })
-          }
-          disabled={is_resolved}
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate("AlertDetails", { item })}
         >
-          <Text style={styles.buttonText}>{is_resolved ? "" : "Details"}</Text>
+          <Text style={styles.buttonText}>Details</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => deleteSure(uid, image_path)}
           style={styles.deleteButton}
         >
-          <Text>X</Text>
+          <MaterialCommunityIcons
+            name="delete-outline"
+            size={24}
+            color={COLORS.primary}
+          />
         </TouchableOpacity>
       </View>
     )
@@ -114,35 +145,7 @@ const AlertsScreen = ({ route, navigation }) => {
       <TouchableOpacity style={styles.debug} onPress={broadcastDebugCapture}>
         <Text style={{ fontSize: 16 }}>debug</Text>
       </TouchableOpacity>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Template")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/template.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Alerts")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/alerts.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Statistics")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/statistics.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
+      <Toolbar navigation={navigation} />
     </View>
   )
 }
@@ -154,16 +157,17 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
   scrollContainer: {
     padding: 16,
   },
   alertBox: {
     flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#ccc",
+    backgroundColor: "#F6F6FB",
     borderRadius: 5,
     padding: 16,
+    paddingRight: 5,
     marginBottom: 10,
     justifyContent: "center",
     alignItems: "center",
@@ -175,28 +179,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "red",
     fontWeight: "bold",
+    fontFamily: "Lato_400Regular",
   },
   resolvedText: {
     fontSize: 20,
     color: "green",
+    fontFamily: "Lato_400Regular",
   },
   detailsButton: {
     flex: 1,
     marginVertical: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ccc",
+    backgroundColor: COLORS.accent,
     padding: 5,
     marginVertical: 10,
     borderRadius: 20,
-  },
-  resolvedButton: {
-    flex: 1,
-    marginVertical: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
-    marginTop: 10,
   },
   deleteButton: {
     flex: 0.5,
@@ -204,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "black",
+    color: "white",
   },
   tabContainer: {
     flexDirection: "row",

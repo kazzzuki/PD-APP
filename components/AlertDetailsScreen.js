@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native"
 import { formatDateAndTime } from "../utils/timedate"
 import { getImageURL, resolveAlert } from "@/utils/client"
+import COLORS from "@/constants/colors"
+import { Colors } from "react-native/Libraries/NewAppScreen"
 
 const AlertDetailsScreen = ({ route, navigation }) => {
   const { item } = route.params
@@ -36,7 +38,14 @@ const AlertDetailsScreen = ({ route, navigation }) => {
           resizeMode="contain"
         />
       </View>
-      <TouchableOpacity style={styles.resolvedButton} onPress={handleResolve}>
+      <TouchableOpacity
+        style={[
+          styles.resolvedButton,
+          is_resolved && { backgroundColor: COLORS.gray },
+        ]}
+        onPress={handleResolve}
+        disabled={is_resolved}
+      >
         <Text style={styles.buttonText}>Resolved</Text>
       </TouchableOpacity>
     </View>
@@ -49,6 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
+    backgroundColor: "white",
   },
   image: {
     flex: 1,
@@ -65,9 +75,9 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   resolvedButton: {
-    backgroundColor: "#4CAF50",
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: COLORS.primary,
+    padding: 20,
+    borderRadius: 20,
     marginTop: 50,
   },
   buttonText: {

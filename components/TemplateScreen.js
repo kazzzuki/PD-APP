@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native"
 import { getImageURL, broadcastGenerateTemplate } from "../utils/client"
+import Toolbar from "../components/Toolbar"
+import COLORS from "../constants/colors"
 
 const TemplateScreen = ({ navigation }) => {
   const [templateGenerated, setTemplateGenerated] = useState(false)
@@ -55,7 +57,7 @@ const TemplateScreen = ({ navigation }) => {
         <TouchableOpacity
           style={[
             styles.startButton,
-            templateGenerated && styles.disabledButton,
+            templateGenerated && { backgroundColor: "grey" },
           ]}
           onPress={isRecalibrating ? null : handleStart}
           disabled={templateGenerated}
@@ -66,7 +68,7 @@ const TemplateScreen = ({ navigation }) => {
         <TouchableOpacity
           style={[
             styles.recalibrateButton,
-            !templateGenerated && styles.disabledButton,
+            !templateGenerated && { backgroundColor: "grey" },
           ]}
           onPress={handleRecalibrate}
           disabled={!templateGenerated}
@@ -74,35 +76,7 @@ const TemplateScreen = ({ navigation }) => {
           <Text style={styles.buttonText}>Recalibrate</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Template")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/template.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Alerts")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/alerts.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Statistics")}
-          style={styles.tab}
-        >
-          <Image
-            source={require("../assets/images/statistics.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
+      <Toolbar navigation={navigation} />
     </View>
   )
 }
@@ -111,6 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
+    backgroundColor: "white",
   },
   image: {
     flex: 1,
@@ -119,17 +94,16 @@ const styles = StyleSheet.create({
     height: undefined,
   },
   imageBox: {
-    width: 300,
-    height: 300,
+    flex: 1,
     backgroundColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    marginVertical: 120,
+    marginVertical: 80,
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingHorizontal: 65,
     marginBottom: 70,
   },
@@ -137,17 +111,16 @@ const styles = StyleSheet.create({
     width: 40,
   },
   startButton: {
-    backgroundColor: "blue",
+    width: 100,
+    backgroundColor: COLORS.accent,
     padding: 10,
     borderRadius: 5,
   },
   recalibrateButton: {
-    backgroundColor: "blue",
+    width: 100,
+    backgroundColor: COLORS.accent,
     padding: 10,
     borderRadius: 5,
-  },
-  disabledButton: {
-    backgroundColor: "grey",
   },
   buttonText: {
     color: "white",

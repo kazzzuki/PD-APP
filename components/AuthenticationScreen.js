@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native"
 import { authUser } from "../utils/client"
+import COLORS from "../constants/colors"
 
 const AuthenticationScreen = ({ navigation }) => {
   const [operatorId, setOperatorId] = useState("")
@@ -30,21 +31,27 @@ const AuthenticationScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../assets/images/spotless.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <Text style={styles.label}>User Authentication</Text>
-      <TextInput
-        placeholder="Operator ID"
-        style={styles.input}
-        value={operatorId}
-        onChangeText={setOperatorId}
-      />
-      <Pressable style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </Pressable>
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("../assets/images/spotless.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
+      <View style={styles.bottom}>
+        <Text style={styles.label}>User Authentication</Text>
+        <TextInput
+          placeholder="Operator ID"
+          placeholderTextColor={"white"}
+          style={styles.input}
+          value={operatorId}
+          onChangeText={setOperatorId}
+          textAlign="center"
+        />
+        <Pressable style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </Pressable>
+      </View>
     </View>
   )
 }
@@ -52,31 +59,48 @@ const AuthenticationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
     backgroundColor: "white",
+    padding: 16,
+  },
+  imageContainer: {
+    flex: 0.3,
+  },
+  bottom: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 30,
+    backgroundColor: COLORS.primary,
+    borderRadius: 20,
   },
   logo: {
-    width: 400,
+    flex: 1,
+    width: 300,
     height: 150,
-    marginBottom: 20,
   },
   label: {
-    fontSize: 18,
-    marginBottom: 10,
-    marginRight: 160,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+    fontFamily: "Lato_400Regular",
   },
   input: {
-    width: "80%",
+    color: "white",
+    width: "100%",
     padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 2,
+    borderColor: "white",
     borderRadius: 5,
     marginBottom: 20,
+    marginTop: 30,
+    fontFamily: "Lato_400Regular",
   },
   loginButton: {
-    backgroundColor: "black",
+    backgroundColor: COLORS.accent,
     padding: 10,
     borderRadius: 5,
     width: "80%",
@@ -84,7 +108,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontWeight: "bold",
+    fontFamily: "Lato_400Regular",
   },
 })
 
